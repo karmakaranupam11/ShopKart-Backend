@@ -11,6 +11,8 @@ import java.util.List;
 @Entity
 public class User {
 
+    // Stores the Users Details
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

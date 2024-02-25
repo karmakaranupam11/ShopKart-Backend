@@ -12,7 +12,15 @@ import java.util.Date;
 @Service
 public class JwtProvider {
 
-    SecretKey key = Keys.hmacShaKeyFor(JwtConstants.SECRET_KEY.getBytes());
+//    private final SecretKey key = Keys.hmacShaKeyFor(JwtConstants.SECRET_KEY.getBytes());
+
+
+    private final SecretKey key;
+    public JwtProvider() {
+        // Generate a secure key with a size of 256 bits
+        this.key = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
+    }
+
     public String generateToken(Authentication auth){
 
         String jwt = Jwts.builder().setIssuedAt(new Date())
