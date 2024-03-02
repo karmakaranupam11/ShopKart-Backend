@@ -1,55 +1,21 @@
 package com.shopkart.ecommerce.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.shopkart.ecommerce.user.domain.PaymentMethod;
+import com.shopkart.ecommerce.user.domain.PaymentStatus;
+
 
 public class PaymentDetails {
 
+    private PaymentMethod paymentMethod;
+    private PaymentStatus status;
     private String paymentId;
-    private String paymentMethod;
-    private String status;
     private String razorpayPaymentLinkId;
     private String razorpayPaymentLinkReferenceId;
     private String razorpayPaymentLinkStatus;
-    private String razorpayPaymentId;
+    private String razorpayPaymentId​;
 
     public PaymentDetails() {
-
-    }
-
-    public PaymentDetails(String paymentId, String paymentMethod, String status, String razorpayPaymentLinkId, String razorpayPaymentLinkReferenceId, String razorpayPaymentLinkStatus, String razorpayPaymentId) {
-        this.paymentId = paymentId;
-        this.paymentMethod = paymentMethod;
-        this.status = status;
-        this.razorpayPaymentLinkId = razorpayPaymentLinkId;
-        this.razorpayPaymentLinkReferenceId = razorpayPaymentLinkReferenceId;
-        this.razorpayPaymentLinkStatus = razorpayPaymentLinkStatus;
-        this.razorpayPaymentId = razorpayPaymentId;
-    }
-
-    public String getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+        // TODO Auto-generated constructor stub
     }
 
     public String getRazorpayPaymentLinkId() {
@@ -76,11 +42,31 @@ public class PaymentDetails {
         this.razorpayPaymentLinkStatus = razorpayPaymentLinkStatus;
     }
 
-    public String getRazorpayPaymentId() {
-        return razorpayPaymentId;
+    public String getRazorpayPaymentId​() {
+        return razorpayPaymentId​;
     }
 
-    public void setRazorpayPaymentId(String razorpayPaymentId) {
-        this.razorpayPaymentId = razorpayPaymentId;
+    public void setRazorpayPaymentId​(String razorpayPaymentId​) {
+        this.razorpayPaymentId​ = razorpayPaymentId​;
     }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+    public String getPaymentId() {
+        return paymentId;
+    }
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
+    public PaymentStatus getStatus() {
+        return status;
+    }
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
+    }
+
 }

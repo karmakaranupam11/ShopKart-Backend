@@ -11,85 +11,76 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CartServiceImplementation implements CartService {
+public class CartServiceImplementation implements CartService{
 
-    @Autowired
     private CartRepository cartRepository;
-
-    @Autowired
     private CartItemService cartItemService;
-
-    @Autowired
     private ProductService productService;
+
+
+    public CartServiceImplementation(CartRepository cartRepository,CartItemService cartItemService,
+                                     ProductService productService) {
+        this.cartRepository=cartRepository;
+        this.productService=productService;
+        this.cartItemService=cartItemService;
+    }
 
     @Override
     public Cart createCart(User user) {
 
         Cart cart = new Cart();
-
         cart.setUser(user);
+        Cart createdCart=cartRepository.save(cart);
+        return createdCart;
+    }
 
-        Cart newCart = cartRepository.save(cart);
+    public Cart findUserCart(Long userId) {
+        Cart cart =	cartRepository.findByUserId(userId);
+        int totalPrice=0;
+        int totalDiscountedPrice=0;
+        int totalItem=0;
+        for(CartItem cartsItem : cart.getCartItems()) {
+            totalPrice+=cartsItem.getPrice();
+            totalDiscountedPrice+=cartsItem.getDiscountedPrice();
+            totalItem+=cartsItem.getQuantity();
+        }
 
-        return newCart;
+        cart.setTotalPrice(totalPrice);
+        cart.setTotalItem(cart.getCartItems().size());
+        cart.setTotalDiscountedPrice(totalDiscountedPrice);
+        cart.setDiscount(totalPrice-totalDiscountedPrice);
+        cart.setTotalItem(totalItem);
+
+        return cartRepository.save(cart);
+
     }
 
     @Override
-    public String addCartItem(Long userId, AddItemRequest req) throws ProductException {
+    public CartItem addCartItem(Long userId, AddItemRequest req) throws ProductException {
+        Cart cart=cartRepository.findByUserId(userId);
+        Product product=productService.findProductById(req.getProductId());
 
-        Cart cart = cartRepository.findByUserId(userId);
+        CartItem isPresent=cartItemService.isCartItemExist(cart, product, req.getSize(),userId);
 
-        Product product = productService.findProductById(req.getProductId());
-
-        // Check if the cartId is already present in the cart
-
-        CartItem isPresent = cartItemService.isCartItemExist(cart,product, req.getSize(),userId);
-
-        if(isPresent == null){
+        if(isPresent == null) {
             CartItem cartItem = new CartItem();
-
             cartItem.setProduct(product);
             cartItem.setCart(cart);
             cartItem.setQuantity(req.getQuantity());
             cartItem.setUserId(userId);
 
-            int price = req.getQuantity() * product.getDiscounted_price();
-            cartItem.setPrice(price);
 
+            int price=req.getQuantity()*product.getDiscounted_price();
+            cartItem.setPrice(price);
             cartItem.setSize(req.getSize());
 
-            CartItem createdCartItem = cartItemService.createCartItem(cartItem);
+            CartItem createdCartItem=cartItemService.createCartItem(cartItem);
             cart.getCartItems().add(createdCartItem);
-
+            return createdCartItem;
         }
 
-        return "Item Add To Cart";
 
-    }
-
-    @Override
-    public Cart findUserCart(Long userId) {
-
-        // Get the cart
-        Cart cart = cartRepository.findByUserId(userId);
-
-        int totalPrice = 0;
-        int totalDiscountedPrice = 0;
-        int totalItem = 0;
-
-        for(CartItem cartItem : cart.getCartItems()){
-            totalPrice += cartItem.getPrice();
-            totalDiscountedPrice += cartItem.getDiscountedPrice();
-            totalItem += cartItem.getQuantity();
-        }
-
-        cart.setTotalItem(totalItem);
-        cart.setTotalPrice(totalPrice);
-        cart.setTotalDiscountedPrice(totalDiscountedPrice);
-        cart.setDiscount(totalPrice - totalDiscountedPrice);
-
-        return cartRepository.save(cart);
-
+        return isPresent;
     }
 
 }
