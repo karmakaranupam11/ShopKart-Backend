@@ -3,9 +3,12 @@ package com.shopkart.ecommerce.repository;
 import com.shopkart.ecommerce.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User,Long> {
+import java.util.List;
 
-    // for getting the user by email
+public interface UserRepository extends JpaRepository<User, Long> {
+
     public User findByEmail(String email);
+
+    public List<User> findAllByOrderByCreatedAtDesc();
 
 }

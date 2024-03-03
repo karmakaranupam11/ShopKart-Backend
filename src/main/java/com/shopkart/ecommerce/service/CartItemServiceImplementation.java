@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class CartItemServiceImplementation implements CartItemService{
+public class CartItemServiceImplementation implements CartItemService {
 
     @Autowired
     private CartItemRepository cartItemRepository;
@@ -44,7 +44,7 @@ public class CartItemServiceImplementation implements CartItemService{
 
         // Check if the userId for the cart item and user id of current user is same
         // then only we allow the updation of the cart
-        if(user.getId().equals(userId)){
+        if (user.getId().equals(userId)) {
             item.setQuantity(cartItem.getQuantity());
             item.setPrice(item.getQuantity() * item.getProduct().getPrice());
             item.setDiscountedPrice(item.getProduct().getDiscounted_price() * item.getQuantity());
@@ -56,7 +56,7 @@ public class CartItemServiceImplementation implements CartItemService{
     @Override
     public CartItem isCartItemExist(Cart cart, Product product, String size, Long userId) {
 
-        CartItem cartItem = cartItemRepository.isCartItemExists(cart,product,size,userId);
+        CartItem cartItem = cartItemRepository.isCartItemExists(cart, product, size, userId);
 
         return cartItem;
 
@@ -74,10 +74,9 @@ public class CartItemServiceImplementation implements CartItemService{
         User reqUser = userService.findUserById(userId);
 
         // Check if the users are same
-        if(user.getId().equals(reqUser.getId())){
+        if (user.getId().equals(reqUser.getId())) {
             cartItemRepository.deleteById(cartItemId);
-        }
-        else {
+        } else {
             throw new UserException("You can't Remove Another Users Items");
         }
 
@@ -88,10 +87,9 @@ public class CartItemServiceImplementation implements CartItemService{
 
         Optional<CartItem> optional = cartItemRepository.findById(cartItemId);
 
-        if(optional.isPresent()){
-          return optional.get();
-        }
-        else{
+        if (optional.isPresent()) {
+            return optional.get();
+        } else {
             throw new CartItemException("Cart not found with id : " + cartItemId);
         }
 

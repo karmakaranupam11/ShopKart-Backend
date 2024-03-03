@@ -11,18 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CartServiceImplementation implements CartService{
+public class CartServiceImplementation implements CartService {
 
     private CartRepository cartRepository;
     private CartItemService cartItemService;
     private ProductService productService;
 
 
-    public CartServiceImplementation(CartRepository cartRepository,CartItemService cartItemService,
+    public CartServiceImplementation(CartRepository cartRepository, CartItemService cartItemService,
                                      ProductService productService) {
-        this.cartRepository=cartRepository;
-        this.productService=productService;
-        this.cartItemService=cartItemService;
+        this.cartRepository = cartRepository;
+        this.productService = productService;
+        this.cartItemService = cartItemService;
     }
 
     @Override
@@ -30,25 +30,25 @@ public class CartServiceImplementation implements CartService{
 
         Cart cart = new Cart();
         cart.setUser(user);
-        Cart createdCart=cartRepository.save(cart);
+        Cart createdCart = cartRepository.save(cart);
         return createdCart;
     }
 
     public Cart findUserCart(Long userId) {
-        Cart cart =	cartRepository.findByUserId(userId);
-        int totalPrice=0;
-        int totalDiscountedPrice=0;
-        int totalItem=0;
-        for(CartItem cartsItem : cart.getCartItems()) {
-            totalPrice+=cartsItem.getPrice();
-            totalDiscountedPrice+=cartsItem.getDiscountedPrice();
-            totalItem+=cartsItem.getQuantity();
+        Cart cart = cartRepository.findByUserId(userId);
+        int totalPrice = 0;
+        int totalDiscountedPrice = 0;
+        int totalItem = 0;
+        for (CartItem cartsItem : cart.getCartItems()) {
+            totalPrice += cartsItem.getPrice();
+            totalDiscountedPrice += cartsItem.getDiscountedPrice();
+            totalItem += cartsItem.getQuantity();
         }
 
         cart.setTotalPrice(totalPrice);
         cart.setTotalItem(cart.getCartItems().size());
         cart.setTotalDiscountedPrice(totalDiscountedPrice);
-        cart.setDiscount(totalPrice-totalDiscountedPrice);
+        cart.setDiscount(totalPrice - totalDiscountedPrice);
         cart.setTotalItem(totalItem);
 
         return cartRepository.save(cart);
@@ -57,12 +57,12 @@ public class CartServiceImplementation implements CartService{
 
     @Override
     public CartItem addCartItem(Long userId, AddItemRequest req) throws ProductException {
-        Cart cart=cartRepository.findByUserId(userId);
-        Product product=productService.findProductById(req.getProductId());
+        Cart cart = cartRepository.findByUserId(userId);
+        Product product = productService.findProductById(req.getProductId());
 
-        CartItem isPresent=cartItemService.isCartItemExist(cart, product, req.getSize(),userId);
+        CartItem isPresent = cartItemService.isCartItemExist(cart, product, req.getSize(), userId);
 
-        if(isPresent == null) {
+        if (isPresent == null) {
             CartItem cartItem = new CartItem();
             cartItem.setProduct(product);
             cartItem.setCart(cart);
@@ -70,11 +70,11 @@ public class CartServiceImplementation implements CartService{
             cartItem.setUserId(userId);
 
 
-            int price=req.getQuantity()*product.getDiscounted_price();
+            int price = req.getQuantity() * product.getDiscounted_price();
             cartItem.setPrice(price);
             cartItem.setSize(req.getSize());
 
-            CartItem createdCartItem=cartItemService.createCartItem(cartItem);
+            CartItem createdCartItem = cartItemService.createCartItem(cartItem);
             cart.getCartItems().add(createdCartItem);
             return createdCartItem;
         }

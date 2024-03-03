@@ -16,7 +16,7 @@ public class Review {
 
     // we will store product id for associating with the product
     @ManyToOne
-    @JoinColumn(name="product_id")
+    @JoinColumn(name = "product_id")
     @JsonIgnore
     private Product product;
 

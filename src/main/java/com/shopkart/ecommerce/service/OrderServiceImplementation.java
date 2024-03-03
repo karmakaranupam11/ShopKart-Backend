@@ -23,30 +23,30 @@ public class OrderServiceImplementation implements OrderService {
     private OrderItemService orderItemService;
     private OrderItemRepository orderItemRepository;
 
-    public OrderServiceImplementation(OrderRepository orderRepository,CartService cartService,
-                                      AddressRepository addressRepository,UserRepository userRepository,
-                                      OrderItemService orderItemService,OrderItemRepository orderItemRepository) {
-        this.orderRepository=orderRepository;
-        this.cartService=cartService;
-        this.addressRepository=addressRepository;
-        this.userRepository=userRepository;
-        this.orderItemService=orderItemService;
-        this.orderItemRepository=orderItemRepository;
+    public OrderServiceImplementation(OrderRepository orderRepository, CartService cartService,
+                                      AddressRepository addressRepository, UserRepository userRepository,
+                                      OrderItemService orderItemService, OrderItemRepository orderItemRepository) {
+        this.orderRepository = orderRepository;
+        this.cartService = cartService;
+        this.addressRepository = addressRepository;
+        this.userRepository = userRepository;
+        this.orderItemService = orderItemService;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @Override
     public Order createOrder(User user, Address shippAddress) {
 
         shippAddress.setUser(user);
-        Address address= addressRepository.save(shippAddress);
+        Address address = addressRepository.save(shippAddress);
         user.getAddress().add(address);
         userRepository.save(user);
 
-        Cart cart=cartService.findUserCart(user.getId());
-        List<OrderItem> orderItems=new ArrayList<>();
+        Cart cart = cartService.findUserCart(user.getId());
+        List<OrderItem> orderItems = new ArrayList<>();
 
-        for(CartItem item: cart.getCartItems()) {
-            OrderItem orderItem=new OrderItem();
+        for (CartItem item : cart.getCartItems()) {
+            OrderItem orderItem = new OrderItem();
 
             orderItem.setPrice(item.getPrice());
             orderItem.setProduct(item.getProduct());
@@ -56,13 +56,13 @@ public class OrderServiceImplementation implements OrderService {
             orderItem.setDiscountedPrice(item.getDiscountedPrice());
 
 
-            OrderItem createdOrderItem=orderItemRepository.save(orderItem);
+            OrderItem createdOrderItem = orderItemRepository.save(orderItem);
 
             orderItems.add(createdOrderItem);
         }
 
 
-        Order createdOrder=new Order();
+        Order createdOrder = new Order();
         createdOrder.setUser(user);
         createdOrder.setOrderItems(orderItems);
         createdOrder.setTotalPrice(cart.getTotalPrice());
@@ -76,9 +76,9 @@ public class OrderServiceImplementation implements OrderService {
         createdOrder.getPaymentDetails().setStatus(PaymentStatus.PENDING);
         createdOrder.setCreatedAt(LocalDateTime.now());
 
-        Order savedOrder=orderRepository.save(createdOrder);
+        Order savedOrder = orderRepository.save(createdOrder);
 
-        for(OrderItem item:orderItems) {
+        for (OrderItem item : orderItems) {
             item.setOrder(savedOrder);
             orderItemRepository.save(item);
         }
@@ -89,7 +89,7 @@ public class OrderServiceImplementation implements OrderService {
 
     @Override
     public Order placedOrder(Long orderId) throws OrderException {
-        Order order=findOrderById(orderId);
+        Order order = findOrderById(orderId);
         order.setOrderStatus(OrderStatus.PLACED);
         order.getPaymentDetails().setStatus(PaymentStatus.COMPLETED);
         return order;
@@ -97,7 +97,7 @@ public class OrderServiceImplementation implements OrderService {
 
     @Override
     public Order confirmedOrder(Long orderId) throws OrderException {
-        Order order=findOrderById(orderId);
+        Order order = findOrderById(orderId);
         order.setOrderStatus(OrderStatus.CONFIRMED);
 
 
@@ -106,38 +106,38 @@ public class OrderServiceImplementation implements OrderService {
 
     @Override
     public Order shippedOrder(Long orderId) throws OrderException {
-        Order order=findOrderById(orderId);
+        Order order = findOrderById(orderId);
         order.setOrderStatus(OrderStatus.SHIPPED);
         return orderRepository.save(order);
     }
 
     @Override
     public Order deliveredOrder(Long orderId) throws OrderException {
-        Order order=findOrderById(orderId);
+        Order order = findOrderById(orderId);
         order.setOrderStatus(OrderStatus.DELIVERED);
         return orderRepository.save(order);
     }
 
     @Override
     public Order cancledOrder(Long orderId) throws OrderException {
-        Order order=findOrderById(orderId);
+        Order order = findOrderById(orderId);
         order.setOrderStatus(OrderStatus.CANCELLED);
         return orderRepository.save(order);
     }
 
     @Override
     public Order findOrderById(Long orderId) throws OrderException {
-        Optional<Order> opt=orderRepository.findById(orderId);
+        Optional<Order> opt = orderRepository.findById(orderId);
 
-        if(opt.isPresent()) {
+        if (opt.isPresent()) {
             return opt.get();
         }
-        throw new OrderException("order not exist with id "+orderId);
+        throw new OrderException("order not exist with id " + orderId);
     }
 
     @Override
     public List<Order> usersOrderHistory(Long userId) {
-        List<Order> orders=orderRepository.getUsersOrders(userId);
+        List<Order> orders = orderRepository.getUsersOrders(userId);
         return orders;
     }
 
@@ -149,7 +149,7 @@ public class OrderServiceImplementation implements OrderService {
 
     @Override
     public void deleteOrder(Long orderId) throws OrderException {
-        Order order =findOrderById(orderId);
+        Order order = findOrderById(orderId);
 
         orderRepository.deleteById(orderId);
 

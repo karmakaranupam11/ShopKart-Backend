@@ -13,10 +13,10 @@ public class PaymentInfo {
     @Column(name = "card_number")
     private String cardNumber;
 
-    @Column(name="expiraion_date")
+    @Column(name = "expiraion_date")
     private LocalDate expirationDate;
 
-    @Column(name="cvv")
+    @Column(name = "cvv")
     private String cvv;
 
 }

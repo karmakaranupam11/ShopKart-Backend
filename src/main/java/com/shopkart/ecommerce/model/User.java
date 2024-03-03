@@ -12,7 +12,7 @@ import java.util.List;
 public class User {
 
     // Stores the Users Details
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -29,7 +29,7 @@ public class User {
 
     @Embedded
     @ElementCollection
-    @CollectionTable(name="payment_information",joinColumns = @JoinColumn(name="user_id"))
+    @CollectionTable(name = "payment_information", joinColumns = @JoinColumn(name = "user_id"))
     private List<PaymentInfo> paymentInfos = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -42,7 +42,7 @@ public class User {
 
     private LocalDateTime createdAt;
 
-    public User(){
+    public User() {
 
     }
 

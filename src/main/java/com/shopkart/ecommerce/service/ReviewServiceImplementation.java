@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class ReviewServiceImplementation implements ReviewService{
+public class ReviewServiceImplementation implements ReviewService {
 
     @Autowired
     private ReviewRepository reviewRepository;

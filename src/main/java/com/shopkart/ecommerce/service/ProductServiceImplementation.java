@@ -24,52 +24,52 @@ public class ProductServiceImplementation implements ProductService {
     private UserService userService;
     private CategoryRepository categoryRepository;
 
-    public ProductServiceImplementation(ProductRepository productRepository,UserService userService,CategoryRepository categoryRepository) {
-        this.productRepository=productRepository;
-        this.userService=userService;
-        this.categoryRepository=categoryRepository;
+    public ProductServiceImplementation(ProductRepository productRepository, UserService userService, CategoryRepository categoryRepository) {
+        this.productRepository = productRepository;
+        this.userService = userService;
+        this.categoryRepository = categoryRepository;
     }
 
 
     @Override
     public Product createProduct(CreateProductRequest req) {
 
-        Category topLevel=categoryRepository.findByName(req.getTopLevelCategory());
+        Category topLevel = categoryRepository.findByName(req.getTopLevelCategory());
 
-        if(topLevel==null) {
+        if (topLevel == null) {
 
-            Category topLavelCategory=new Category();
+            Category topLavelCategory = new Category();
             topLavelCategory.setName(req.getTopLevelCategory());
             topLavelCategory.setLevel(1);
 
-            topLevel= categoryRepository.save(topLavelCategory);
+            topLevel = categoryRepository.save(topLavelCategory);
         }
 
-        Category secondLevel=categoryRepository.
-                findByNameAndParant(req.getSecondLevelCategory(),topLevel.getName());
-        if(secondLevel==null) {
+        Category secondLevel = categoryRepository.
+                findByNameAndParant(req.getSecondLevelCategory(), topLevel.getName());
+        if (secondLevel == null) {
 
-            Category secondLavelCategory=new Category();
+            Category secondLavelCategory = new Category();
             secondLavelCategory.setName(req.getSecondLevelCategory());
             secondLavelCategory.setParentCategory(topLevel);
             secondLavelCategory.setLevel(2);
 
-            secondLevel= categoryRepository.save(secondLavelCategory);
+            secondLevel = categoryRepository.save(secondLavelCategory);
         }
 
-        Category thirdLevel=categoryRepository.findByNameAndParant(req.getThirdLevelCategory(),secondLevel.getName());
-        if(thirdLevel==null) {
+        Category thirdLevel = categoryRepository.findByNameAndParant(req.getThirdLevelCategory(), secondLevel.getName());
+        if (thirdLevel == null) {
 
-            Category thirdLavelCategory=new Category();
+            Category thirdLavelCategory = new Category();
             thirdLavelCategory.setName(req.getThirdLevelCategory());
             thirdLavelCategory.setParentCategory(secondLevel);
             thirdLavelCategory.setLevel(3);
 
-            thirdLevel=categoryRepository.save(thirdLavelCategory);
+            thirdLevel = categoryRepository.save(thirdLavelCategory);
         }
 
 
-        Product product=new Product();
+        Product product = new Product();
         product.setTitle(req.getTitle());
         product.setColor(req.getColor());
         product.setDescription(req.getDescription());
@@ -83,9 +83,9 @@ public class ProductServiceImplementation implements ProductService {
         product.setCategory(thirdLevel);
         product.setCreatedAt(LocalDateTime.now());
 
-        Product savedProduct= productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
 
-        System.out.println("products - "+product);
+        System.out.println("products - " + product);
 
         return savedProduct;
     }
@@ -93,9 +93,9 @@ public class ProductServiceImplementation implements ProductService {
     @Override
     public String deleteProduct(Long productId) throws ProductException {
 
-        Product product=findProductById(productId);
+        Product product = findProductById(productId);
 
-        System.out.println("delete product "+product.getId()+" - "+productId);
+        System.out.println("delete product " + product.getId() + " - " + productId);
         product.getSizes().clear();
 //		productRepository.save(product);
 //		product.getCategory().
@@ -105,17 +105,15 @@ public class ProductServiceImplementation implements ProductService {
     }
 
     @Override
-    public Product updateProduct(Long productId,Product req) throws ProductException {
-        Product product=findProductById(productId);
+    public Product updateProduct(Long productId, Product req) throws ProductException {
+        Product product = findProductById(productId);
 
-        if(req.getQuantity()!=0) {
+        if (req.getQuantity() != 0) {
             product.setQuantity(req.getQuantity());
         }
-        if(req.getDescription()!=null) {
+        if (req.getDescription() != null) {
             product.setDescription(req.getDescription());
         }
-
-
 
 
         return productRepository.save(product);
@@ -128,18 +126,18 @@ public class ProductServiceImplementation implements ProductService {
 
     @Override
     public Product findProductById(Long id) throws ProductException {
-        Optional<Product> opt=productRepository.findById(id);
+        Optional<Product> opt = productRepository.findById(id);
 
-        if(opt.isPresent()) {
+        if (opt.isPresent()) {
             return opt.get();
         }
-        throw new ProductException("product not found with id "+id);
+        throw new ProductException("product not found with id " + id);
     }
 
     @Override
     public List<Product> findProductByCategory(String category) {
 
-        System.out.println("category --- "+category);
+        System.out.println("category --- " + category);
 
         List<Product> products = productRepository.findByCategory(category);
 
@@ -148,18 +146,15 @@ public class ProductServiceImplementation implements ProductService {
 
     @Override
     public List<Product> searchProduct(String query) {
-        List<Product> products=productRepository.searchProduct(query);
+        List<Product> products = productRepository.searchProduct(query);
         return products;
     }
 
 
-
-
-
     @Override
-    public Page<Product> getAllProduct(String category, List<String>colors,
+    public Page<Product> getAllProduct(String category, List<String> colors,
                                        List<String> sizes, Integer minPrice, Integer maxPrice,
-                                       Integer minDiscount,String sort, String stock, Integer pageNumber, Integer pageSize ) {
+                                       Integer minDiscount, String sort, String stock, Integer pageNumber, Integer pageSize) {
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
@@ -174,13 +169,12 @@ public class ProductServiceImplementation implements ProductService {
 
         }
 
-        if(stock!=null) {
+        if (stock != null) {
 
-            if(stock.equals("in_stock")) {
-                products=products.stream().filter(p->p.getQuantity()>0).collect(Collectors.toList());
-            }
-            else if (stock.equals("out_of_stock")) {
-                products=products.stream().filter(p->p.getQuantity()<1).collect(Collectors.toList());
+            if (stock.equals("in_stock")) {
+                products = products.stream().filter(p -> p.getQuantity() > 0).collect(Collectors.toList());
+            } else if (stock.equals("out_of_stock")) {
+                products = products.stream().filter(p -> p.getQuantity() < 1).collect(Collectors.toList());
             }
 
 

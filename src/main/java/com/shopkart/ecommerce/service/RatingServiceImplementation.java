@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class RatingServiceImplementation implements RatingService{
+public class RatingServiceImplementation implements RatingService {
 
     @Autowired
     private RatingRepository ratingRepository;

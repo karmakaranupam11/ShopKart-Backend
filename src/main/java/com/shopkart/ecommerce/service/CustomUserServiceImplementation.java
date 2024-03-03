@@ -19,19 +19,19 @@ public class CustomUserServiceImplementation implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         User user = userRepository.findByEmail(username);
 
-        if(user == null){
-            throw  new UsernameNotFoundException("user not found with email " + username);
+        if (user == null) {
+            throw new UsernameNotFoundException("user not found with email " + username);
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         // The User Class used in the below return statement is not our User class which we created in the model, it
         // is a user class provided by spring security
-        return new org.springframework.security.core.userdetails.User(user.getEmail(),user.getPassword(),authorities);
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
 
     }
 
